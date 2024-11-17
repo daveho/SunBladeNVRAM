@@ -2461,7 +2461,7 @@
 				)
 			)
 		)
-		(property "Footprint" "BU1632SM-JJ-GTR:BAT_BU1632SM-JJ-GTR"
+		(property "Footprint" "SunBladeNVRAM:BAT_BU1632SM-JJ-GTR"
 			(at 135.89 132.08 0)
 			(effects
 				(font
