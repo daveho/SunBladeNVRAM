@@ -1999,6 +1999,22 @@
 			)
 		)
 	)
+	(no_connect
+		(at 102.87 132.08)
+		(uuid "0aad013a-1cd5-4f2c-b90d-50d29877a78d")
+	)
+	(no_connect
+		(at 215.9 105.41)
+		(uuid "9f0fcb41-d00f-4f61-8068-11cbdfe75943")
+	)
+	(no_connect
+		(at 231.14 105.41)
+		(uuid "b2aa9ef1-46c5-49a7-898d-0c61fe1e5e81")
+	)
+	(no_connect
+		(at 100.33 132.08)
+		(uuid "cf8f1284-8d71-4c4f-b8ff-0643aed4808c")
+	)
 	(wire
 		(pts
 			(xy 54.61 130.81) (xy 54.61 139.7)
