@@ -2000,20 +2000,20 @@
 		)
 	)
 	(no_connect
-		(at 102.87 132.08)
-		(uuid "0aad013a-1cd5-4f2c-b90d-50d29877a78d")
+		(at 215.9 111.76)
+		(uuid "251ff89e-2e86-49ee-9793-89a3da100a97")
 	)
 	(no_connect
-		(at 215.9 105.41)
-		(uuid "9f0fcb41-d00f-4f61-8068-11cbdfe75943")
+		(at 218.44 111.76)
+		(uuid "30089de2-1ed8-45e6-8df0-55a1b5be7f89")
 	)
 	(no_connect
-		(at 231.14 105.41)
-		(uuid "b2aa9ef1-46c5-49a7-898d-0c61fe1e5e81")
+		(at 95.25 133.35)
+		(uuid "b4f929fe-690d-4df2-a1cc-451e0f7d1ad2")
 	)
 	(no_connect
-		(at 100.33 132.08)
-		(uuid "cf8f1284-8d71-4c4f-b8ff-0643aed4808c")
+		(at 97.79 133.35)
+		(uuid "f8e1e939-7293-45af-8de2-f2129a5605f9")
 	)
 	(wire
 		(pts
@@ -2434,7 +2434,7 @@
 		)
 		(uuid "9cf309c6-af39-4cfa-9f03-ea7a0da69bd4")
 	)
-	(text "Connections from battery \"hat\" PCB\n(J7/J8 are mechanical only)"
+	(text "Connections from battery \"hat\" PCB\n(J7 is mechanical only)"
 		(exclude_from_sim no)
 		(at 73.152 112.014 0)
 		(effects
@@ -2467,7 +2467,7 @@
 		)
 		(uuid "c5f31918-ae9b-489d-ae00-721ce1aa92d6")
 	)
-	(text "J105 and J106 connect to\nJ5 and J6, respectively.\n\nJ107 and J108 connect to\nJ7 and J8, respectively, but\nare only mechanical."
+	(text "J105 and J106 connect to\nJ5 and J6, respectively.\n\nJ107 connects to J7, but\nis only mechanical."
 		(exclude_from_sim no)
 		(at 188.468 128.27 0)
 		(effects
@@ -2583,7 +2583,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x14_P2.54mm_Vertical"
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x14_P2.54mm_Vertical_SMD_Pin1Left"
 			(at 44.45 78.74 0)
 			(effects
 				(font
@@ -2662,34 +2662,34 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Conn_01x01_Pin")
-		(at 215.9 110.49 90)
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 218.44 106.68 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "3049292e-a219-4fcb-8c54-d3648564ccf8")
+		(uuid "4dd2a748-e125-4712-ba88-4c8864597f0d")
 		(property "Reference" "J107"
-			(at 217.17 105.664 90)
+			(at 215.9 104.902 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
-		(property "Value" "Conn_01x01_Pin"
-			(at 211.328 101.092 0)
+		(property "Value" "Conn_01x02_Pin"
+			(at 220.98 95.504 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 215.9 110.49 0)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
+			(at 218.44 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2698,7 +2698,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 215.9 110.49 0)
+			(at 218.44 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2706,8 +2706,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 215.9 110.49 0)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 218.44 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2716,78 +2716,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "620625f2-45c6-407a-b431-5d9923c50d99")
+			(uuid "e23baad6-c02a-4822-a544-567a8d2dfc5b")
+		)
+		(pin "2"
+			(uuid "a5d78320-9cbd-402a-a818-e2d77850182c")
 		)
 		(instances
 			(project "SunBladeNVRAM"
 				(path "/a5619b9c-2a1e-4dd3-8c34-92032ec8ab73"
 					(reference "J107")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:Conn_01x01_Pin")
-		(at 231.14 110.49 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "79f2b0c6-81fe-40f8-a114-f524390957ab")
-		(property "Reference" "J108"
-			(at 232.41 105.664 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "Conn_01x01_Pin"
-			(at 226.568 101.092 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 231.14 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 231.14 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 231.14 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "865ae911-6113-4be3-83e4-54e3a22fa024")
-		)
-		(instances
-			(project "SunBladeNVRAM"
-				(path "/a5619b9c-2a1e-4dd3-8c34-92032ec8ab73"
-					(reference "J108")
 					(unit 1)
 				)
 			)
@@ -3116,138 +3053,6 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x01_Pin")
-		(at 100.33 127 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "aa04f313-d5d4-4798-a3d8-040be687462d")
-		(property "Reference" "J7"
-			(at 98.806 125.222 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "Conn_01x01_Pin"
-			(at 96.774 115.824 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 100.33 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 100.33 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 100.33 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "ce5a4f76-bdf7-446c-9cfd-dbffe18bd60b")
-		)
-		(instances
-			(project "SunBladeNVRAM"
-				(path "/a5619b9c-2a1e-4dd3-8c34-92032ec8ab73"
-					(reference "J7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:Conn_01x01_Pin")
-		(at 102.87 127 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "c3648118-3293-460e-8a57-48a043afe63c")
-		(property "Reference" "J8"
-			(at 101.6 125.222 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "Conn_01x01_Pin"
-			(at 105.156 115.824 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 102.87 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 102.87 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 102.87 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "c6b847ef-0eb3-4d1d-b1e4-251b3025452f")
-		)
-		(instances
-			(project "SunBladeNVRAM"
-				(path "/a5619b9c-2a1e-4dd3-8c34-92032ec8ab73"
-					(reference "J8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:Conn_01x01_Pin")
 		(at 184.15 110.49 90)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3341,7 +3146,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x14_P2.54mm_Vertical"
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x14_P2.54mm_Vertical_SMD_Pin1Right"
 			(at 123.19 78.74 0)
 			(effects
 				(font
@@ -3651,7 +3456,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm"
+		(property "Footprint" "SunBladeNVRAM:M48T59Y-MH"
 			(at 83.82 80.01 0)
 			(effects
 				(font
@@ -3766,6 +3571,75 @@
 			(project ""
 				(path "/a5619b9c-2a1e-4dd3-8c34-92032ec8ab73"
 					(reference "U1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 97.79 128.27 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ef15d2af-e7a6-47f1-bb94-a6a53166abaa")
+		(property "Reference" "J7"
+			(at 95.25 126.492 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Conn_01x02_Pin"
+			(at 100.33 117.094 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
+			(at 97.79 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 97.79 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 97.79 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b4770b84-2592-4e3f-abe0-8fff209547a4")
+		)
+		(pin "2"
+			(uuid "36d1d7fd-2607-4c3a-93b2-e1aba9e7e325")
+		)
+		(instances
+			(project ""
+				(path "/a5619b9c-2a1e-4dd3-8c34-92032ec8ab73"
+					(reference "J7")
 					(unit 1)
 				)
 			)
