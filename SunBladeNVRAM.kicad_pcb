@@ -1725,7 +1725,7 @@
 		(uuid "8a426ce7-ab07-45c0-88c4-bf98333c803b")
 		(at 84.98 86.74)
 		(property "Reference" "J1"
-			(at 0.803 -3.155 0)
+			(at 3.8 -1.25 0)
 			(layer "F.SilkS")
 			(uuid "aa5fa594-7c28-4389-91d1-39879b35bbb1")
 			(effects
@@ -2620,7 +2620,7 @@
 		(uuid "b2a9ac68-cdb1-4d03-a7c3-eb0fca7c9d7f")
 		(at 84.98 71.5)
 		(property "Reference" "J2"
-			(at 0.803 -3.155 0)
+			(at 3.71 1.36 0)
 			(layer "F.SilkS")
 			(uuid "0328b145-9b57-4812-919e-897c8a48a668")
 			(effects
