@@ -2430,7 +2430,7 @@
 	)
 	(wire
 		(pts
-			(xy 132.08 137.16) (xy 132.08 151.13)
+			(xy 132.08 137.16) (xy 132.08 146.05)
 		)
 		(stroke
 			(width 0)
@@ -2687,6 +2687,16 @@
 			(type default)
 		)
 		(uuid "4205b4a9-8b32-4313-a1dc-8949d024b6d9")
+	)
+	(wire
+		(pts
+			(xy 115.57 104.14) (xy 115.57 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "425f633c-236b-42c8-bd8a-69ccf24830fa")
 	)
 	(bus
 		(pts
@@ -3300,7 +3310,7 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 151.13) (xy 132.08 151.13)
+			(xy 100.33 146.05) (xy 132.08 146.05)
 		)
 		(stroke
 			(width 0)
@@ -3397,6 +3407,16 @@
 			(type default)
 		)
 		(uuid "be969e8e-c1aa-4cd6-8d19-28e8e4d5d941")
+	)
+	(wire
+		(pts
+			(xy 115.57 154.94) (xy 115.57 157.48)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bec65110-f13b-440d-9dda-b16408fd97a1")
 	)
 	(bus
 		(pts
@@ -3680,7 +3700,7 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 151.13) (xy 100.33 162.56)
+			(xy 100.33 146.05) (xy 100.33 162.56)
 		)
 		(stroke
 			(width 0)
@@ -3728,9 +3748,9 @@
 		)
 		(uuid "ffabb06b-c90a-4e16-90fa-5625e120d1b6")
 	)
-	(text "Note: this symbol is shown as the\nM48T59YU-70MH1, which is the surface\nmount variant lacking the battery and\nclock crystal. However, in this test\ncircuit, it should be the full DIP\nmodule (based on the PCB designs in the\nSunBladeNVRAM subdirectory)."
+	(text "Note: this symbol is shown as the\nM48T59YU-70MH1, which is the surface\nmount variant lacking the battery and\nclock crystal. However, in this test\ncircuit, it should be the full DIP\nmodule (based on the PCB designs in the\nSunBladeNVRAM subdirectory).\n\nOr, it could be an actual DIP-format\nM48T59Y (e.g., M48T59Y-70PC)."
 		(exclude_from_sim no)
-		(at 177.546 104.394 0)
+		(at 177.038 107.188 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5217,6 +5237,72 @@
 	)
 	(symbol
 		(lib_id "power:VCC")
+		(at 115.57 154.94 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5c21e8e8-d7e3-439d-8364-cb0a492577e8")
+		(property "Reference" "#PWR010"
+			(at 115.57 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VCC"
+			(at 115.57 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 115.57 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 115.57 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VCC\""
+			(at 115.57 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3df907f9-60f6-4324-b049-3c0451bd4ac5")
+		)
+		(instances
+			(project ""
+				(path "/83149b9d-6d22-4817-bd95-650b7e77deef"
+					(reference "#PWR010")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VCC")
 		(at 87.63 165.1 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -5276,6 +5362,72 @@
 			(project ""
 				(path "/83149b9d-6d22-4817-bd95-650b7e77deef"
 					(reference "#PWR04")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VCC")
+		(at 115.57 104.14 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b18bc07f-3bd0-4dba-aea2-90c81a1f78da")
+		(property "Reference" "#PWR09"
+			(at 115.57 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VCC"
+			(at 115.57 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 115.57 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 115.57 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VCC\""
+			(at 115.57 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6ecda8d7-2c32-422e-9373-fd373b272ed9")
+		)
+		(instances
+			(project ""
+				(path "/83149b9d-6d22-4817-bd95-650b7e77deef"
+					(reference "#PWR09")
 					(unit 1)
 				)
 			)
