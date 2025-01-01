@@ -21,8 +21,10 @@
 //   Arduino D6: -G (active low output enable) to pin 22 on M48T59Y
 //   Arduino D7: -E (active low chip enable) signal to pin 20 on M48T59Y
 //
-//   Arduino A0..A7 (controlled as AVR PORTC):
-//      connected to D0..D7 on the M48T59Y (its data bus pins)
+//   Arduino A0..A3 (controlled as low nybble of AVR PORTC):
+//      connected to D0..D3 on the M48T59Y (its low 4 data bus pins)
+//   Arduino D8..D11 (controlled as low nybble of AVR PORTB):
+//      connected to D4..D7 on the M49T59Y (its high 4 data bus pins)
 
 #define SHIFTREG_DATA 2
 #define SHIFTREG_SCLK 3
@@ -31,6 +33,12 @@
 #define M48T59Y_NW 5
 #define M48T59Y_NG 6
 #define M48T59Y_NE 7
+
+// All locations with addressess less than 1FF0h are memory locations.
+#define M48T59Y_FIRST_REG 0x1FF0
+
+// For very short delays
+#define NOP() __asm__ __volatile__ ("nop\n\t")
 
 void assertAddr(uint16_t addr) {
   for (uint8_t i = 0; i < 16; ++i) {
@@ -73,12 +81,12 @@ uint32_t mulberry32(void) {
   return z ^ z >> 14;
 }
 
-void resetRNG() {
+void rng_reset() {
   state = SEED;
   rngNumAvail = 0;
 }
 
-uint8_t genRNG() {
+uint8_t rng_gen() {
   if ( rngNumAvail == 0 ) {
     rngData = mulberry32();
     rngNumAvail = 4;
@@ -86,6 +94,143 @@ uint8_t genRNG() {
   uint8_t result = rngData & 0xFF;
   rngData >>= 8;
   --rngNumAvail;
+}
+
+// Set up DDRC and DDRB for reading from the M48T59Y.
+void configure_data_bus_for_read() {
+  DDRC = 0x00;
+  DDRB = 0x00;
+  // disable all pull ups
+  PORTC = 0x00;
+  PORTB = 0x00;
+}
+
+// Set up DDRC and DDRB for writing to the M48T59Y.
+void configure_data_bus_for_write() {
+  DDRC = 0x0F;
+  DDRB = 0x0F;
+}
+
+uint8_t m48t59y_read( uint16_t addr ) {
+  uint8_t data;
+  digitalWrite( M48T59Y_NW, 1 ); // make sure write is de-asserted
+  assertAddr( addr );
+  NOP();
+  digitalWrite( M48T59Y_NE, 0 ); // enable chip
+  NOP();
+  digitalWrite( M48T59Y_NG, 0 ); // enable output
+  NOP();
+  data = ((PINB & 0x0F) << 4) | (PINC & 0x0F);
+  NOP();
+  digitalWrite( M48T59Y_NG, 1 ); // disable output
+  digitalWrite( M48T59Y_NE, 1 ); // disable chip
+  return data;
+}
+
+// Note: before calling this, make sure that DDRC and DDRB
+// are both set to 0x0F so that we can assert data to the M48T59Y's
+// data pins.
+void m48t59y_write( uint16_t addr, uint8_t data ) {
+  digitalWrite( M48T59Y_NW, 1 ); // make sure write signal is de-asserted
+  assertAddr( addr );
+  PORTC = (PORTC & 0xF0) | (data & 0xF); // output low nybble of data
+  PORTB = (PORTB & 0xF0) | ((data >> 4) & 0xF); // output high nybble of data
+  NOP();
+  digitalWrite( M48T59Y_NE, 0 ); // enable chip
+  NOP();
+  digitalWrite( M48T59Y_NW, 0 ); // enable write
+  NOP();
+  digitalWrite( M48T59Y_NW, 1 ); // disable write
+  NOP();
+  digitalWrite( M48T59Y_NE, 1 ); // disable chip
+}
+
+/*
+uint8_t tests_passed, tests_executed;
+
+// Verify the contents of memory written previously by writeMem()
+void verify_mem() {
+  Serial.print( "Verifying memory contents..." );
+
+  uint16_t addr = 0;
+  uint16_t mismatch = 0;
+  uint8_t data, expected;
+
+  rng_reset();
+
+  while ( addr < M48T59Y_FIRST_REG ) {
+    data = m48t59y_read( addr );
+    expected = rng_gen();
+    if ( data != expected )
+      ++mismatch;
+    
+    ++addr;
+  }
+
+  if ( mismatch > 0 ) {
+    Serial.print( mismatch );
+    Serial.println( " byte(s) did not match" );
+  } else {
+    Serial.println( "all bytes matched!" );
+    ++tests_passed;
+  }
+
+  ++tests_executed;
+}
+
+// Write pseudo-random data
+void write_mem() {
+  Serial.print( "Writing memory contents..." );
+
+  uint16_t addr = 0;
+  uint16_t mismatch = 0;
+  uint8_t data, expected;
+
+  rng_reset();
+
+  DDRC = 0xFF; // output data to M48T59Y's data pins
+
+  while ( addr < M48T59Y_FIRST_REG ) {
+    data = rng_gen();
+    m48t59y_write( addr, data );
+    ++addr;
+  }
+
+  PORTC = 0x00;
+  DDRC = 0x00; // make data bus pins high-Z again
+
+  Serial.println( "done" );
+}
+*/
+
+void runTests() {
+/*
+  verify_mem();
+  write_mem();
+  verify_mem();
+
+  Serial.print( tests_passed );
+  Serial.print( "/" );
+  Serial.print( tests_executed );
+  Serial.println( " tests passed" );
+*/
+  uint8_t data;
+
+  configure_data_bus_for_write();
+  m48t59y_write( 0x123, 0xDA );
+  configure_data_bus_for_read();
+  data = m48t59y_read( 0x123 );
+  Serial.print( "Wrote 0xDA, read 0x" );
+  Serial.print( (uint16_t) data, HEX );
+  Serial.println( "" );
+
+  configure_data_bus_for_write();
+  m48t59y_write( 0x456, 0x00 );
+  configure_data_bus_for_read();
+  data = m48t59y_read( 0x456 );
+  Serial.print( "Wrote 0x00, read 0x" );
+  Serial.print( (uint16_t) data, HEX );
+  Serial.println( "" );
 }
 
 void setup() {
@@ -107,13 +252,21 @@ void setup() {
   digitalWrite( M48T59Y_NE, 1 );
 
   // set data bus pins to input
-  DDRC = 0x00;
+  configure_data_bus_for_read();
+
+  // use serial output to report results of tests
+  Serial.begin( 9600 );
+  //Serial.println( "Hello" );
+
+  runTests();
 }
 
 uint16_t test = 0;
 
 void loop() {
+/*
   assertAddr( test );
   delay( 100 );
   ++test;
+*/
 }
