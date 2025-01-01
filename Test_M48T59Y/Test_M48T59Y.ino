@@ -145,12 +145,13 @@ void m48t59y_write( uint16_t addr, uint8_t data ) {
   digitalWrite( M48T59Y_NE, 1 ); // disable chip
 }
 
-/*
 uint8_t tests_passed, tests_executed;
 
 // Verify the contents of memory written previously by writeMem()
-void verify_mem() {
+void verify_mem( bool log_mismatch = false ) {
   Serial.print( "Verifying memory contents..." );
+
+  configure_data_bus_for_read();
 
   uint16_t addr = 0;
   uint16_t mismatch = 0;
@@ -161,8 +162,14 @@ void verify_mem() {
   while ( addr < M48T59Y_FIRST_REG ) {
     data = m48t59y_read( addr );
     expected = rng_gen();
-    if ( data != expected )
+    if ( data != expected ) {
       ++mismatch;
+      if ( log_mismatch ) {
+        Serial.print("[");
+        Serial.print( addr, HEX );
+        Serial.print("]");
+      }
+    }
     
     ++addr;
   }
@@ -182,13 +189,13 @@ void verify_mem() {
 void write_mem() {
   Serial.print( "Writing memory contents..." );
 
+  configure_data_bus_for_write();
+
   uint16_t addr = 0;
   uint16_t mismatch = 0;
   uint8_t data, expected;
 
   rng_reset();
-
-  DDRC = 0xFF; // output data to M48T59Y's data pins
 
   while ( addr < M48T59Y_FIRST_REG ) {
     data = rng_gen();
@@ -200,20 +207,21 @@ void write_mem() {
   DDRC = 0x00; // make data bus pins high-Z again
 
   Serial.println( "done" );
+
+  configure_data_bus_for_read();
 }
-*/
 
 void runTests() {
-/*
-  verify_mem();
+  verify_mem( true );
   write_mem();
-  verify_mem();
+  verify_mem( true );
 
   Serial.print( tests_passed );
   Serial.print( "/" );
   Serial.print( tests_executed );
   Serial.println( " tests passed" );
-*/
+
+/*
   uint8_t data;
 
   configure_data_bus_for_write();
@@ -231,6 +239,15 @@ void runTests() {
   Serial.print( "Wrote 0x00, read 0x" );
   Serial.print( (uint16_t) data, HEX );
   Serial.println( "" );
+
+  configure_data_bus_for_write();
+  m48t59y_write( 0x789, 0xFF );
+  configure_data_bus_for_read();
+  data = m48t59y_read( 0x789 );
+  Serial.print( "Wrote 0xFF, read 0x" );
+  Serial.print( (uint16_t) data, HEX );
+  Serial.println( "" );
+*/
 }
 
 void setup() {
