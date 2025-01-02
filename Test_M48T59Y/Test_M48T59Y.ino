@@ -94,6 +94,7 @@ uint8_t rng_gen() {
   uint8_t result = rngData & 0xFF;
   rngData >>= 8;
   --rngNumAvail;
+  return result;
 }
 
 // Set up DDRC and DDRB for reading from the M48T59Y.
@@ -167,6 +168,10 @@ void verify_mem( bool log_mismatch = false ) {
       if ( log_mismatch ) {
         Serial.print("[");
         Serial.print( addr, HEX );
+        Serial.print(",e=");
+        Serial.print( expected, HEX );
+        Serial.print(",a=");
+        Serial.print( data, HEX );
         Serial.print("]");
       }
     }
@@ -202,9 +207,6 @@ void write_mem() {
     m48t59y_write( addr, data );
     ++addr;
   }
-
-  PORTC = 0x00;
-  DDRC = 0x00; // make data bus pins high-Z again
 
   Serial.println( "done" );
 
