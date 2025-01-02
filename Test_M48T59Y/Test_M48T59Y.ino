@@ -25,6 +25,9 @@
 //      connected to D0..D3 on the M48T59Y (its low 4 data bus pins)
 //   Arduino D8..D11 (controlled as low nybble of AVR PORTB):
 //      connected to D4..D7 on the M49T59Y (its high 4 data bus pins)
+//
+//   Arduino A4: connected to GO pushbutton (shorts to ground when pressed)
+//   Ardiomp A5: connected to LOG pushbutton (shorts to ground when pressed)
 
 #define SHIFTREG_DATA 2
 #define SHIFTREG_SCLK 3
@@ -33,6 +36,9 @@
 #define M48T59Y_NW 5
 #define M48T59Y_NG 6
 #define M48T59Y_NE 7
+
+#define GO  0x10  // pin 4 of PORTC
+#define LOG 0x20  // pin 5 of PORTC
 
 // All locations with addressess less than 1FF0h are memory locations.
 #define M48T59Y_FIRST_REG 0x1FF0
@@ -213,10 +219,10 @@ void write_mem() {
   configure_data_bus_for_read();
 }
 
-void runTests() {
-  verify_mem( true );
+void runTests( bool log ) {
+  verify_mem( log );
   write_mem();
-  verify_mem( true );
+  verify_mem( log );
 
   Serial.print( tests_passed );
   Serial.print( "/" );
@@ -277,15 +283,24 @@ void setup() {
   Serial.begin( 9600 );
   //Serial.println( "Hello" );
 
-  runTests();
+  //runTests();
 }
 
 uint16_t test = 0;
 
 void loop() {
-/*
-  assertAddr( test );
-  delay( 100 );
-  ++test;
-*/
+  if ( (PINC & 0x10) == 0 ) {
+    // GO button was pressed
+    Serial.println( "GO pressed" );
+
+    // Check whether LOG button is pressed
+    bool log = ( (PINC & 0x20) == 0 );
+    if ( log )
+      Serial.println( "LOG pressed, will log data mismatches" );
+
+    tests_passed = 0;
+    tests_executed = 0;
+    
+    runTests( log );
+  }
 }
