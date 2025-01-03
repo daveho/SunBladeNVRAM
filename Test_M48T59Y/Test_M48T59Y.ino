@@ -43,6 +43,16 @@
 // All locations with addressess less than 1FF0h are memory locations.
 #define M48T59Y_FIRST_REG 0x1FF0
 
+// register addresses
+#define M48T59Y_CONTROL 0x1FF8
+#define M48T59Y_SECONDS 0x1FF9
+#define M48T59Y_MINUTES 0x1FFA
+#define M48T59Y_HOUR    0x1FFB
+#define M48T59Y_DAY     0x1FFC
+#define M48T59Y_DATE    0x1FFD
+#define M48T59Y_MONTH   0x1FFE
+#define M48T59Y_YEAR    0x1FFF
+
 // For very short delays
 #define NOP() __asm__ __volatile__ ("nop\n\t")
 
@@ -219,10 +229,96 @@ void write_mem() {
   configure_data_bus_for_read();
 }
 
+uint8_t bcd_to_dec( uint8_t bcd ) {
+  return (bcd >> 4)*10 + (bcd & 0xF);
+}
+
+void set_time_and_date() {
+  Serial.println( "Setting time and date..." );
+
+  configure_data_bus_for_write();
+
+  // set the W bit in the control register
+  // (note that we are leaving the calibration bits as 0,
+  // and will also clear the stop bit, meaning that the
+  // oscillator should run)
+  m48t59y_write( M48T59Y_CONTROL, 0x80 );
+
+  // set time and date to 03:40 PM on Jan 3, 2025
+  // (which is approximately when I am writing this code)
+  m48t59y_write( M48T59Y_SECONDS, 0x00 );
+  m48t59y_write( M48T59Y_MINUTES, 0x40 );
+  m48t59y_write( M48T59Y_HOUR, 0x15 );
+  m48t59y_write( M48T59Y_DAY, 0x06 );
+  m48t59y_write( M48T59Y_DATE, 0x03 );
+  m48t59y_write( M48T59Y_MONTH, 0x01 );
+  m48t59y_write( M48T59Y_YEAR, 0x25 );
+
+  // clear the W bit
+  m48t59y_write( M48T59Y_CONTROL, 0x00 );
+
+  configure_data_bus_for_read();
+
+  // wait one second
+  delay( 1000 );
+}
+
+// Verify that the clock is running by seeing the second
+// counter increase. Given that it was previously set to 0,
+// we should need to worry about it rolling over during this test.
+void verify_clock_running() {
+  Serial.println( "Verifying that clock is counting up..." );
+
+  // set R bit in control register
+  configure_data_bus_for_write();
+  m48t59y_write( M48T59Y_CONTROL, 0x40 );
+
+  // read current value of seconds register (will probably be 1)
+  uint8_t cur_sec;
+  configure_data_bus_for_read();
+  cur_sec = m48t59y_read( M48T59Y_SECONDS );
+  cur_sec = bcd_to_dec( cur_sec );
+  Serial.print( "  initial seconds=" );
+  Serial.print( (uint16_t) cur_sec );
+  Serial.println();
+
+  // clear R bit so that registers are updated again
+  configure_data_bus_for_write();
+  m48t59y_write( M48T59Y_CONTROL, 0x00 );
+  configure_data_bus_for_read();
+
+  // wait for three seconds
+  delay( 3000 );
+
+  // set R bit in control register again
+  configure_data_bus_for_write();
+  m48t59y_write( M48T59Y_CONTROL, 0x40 );
+
+  // read updated second count
+  configure_data_bus_for_read();
+  uint8_t now_sec = m48t59y_read( M48T59Y_SECONDS );
+  now_sec = bcd_to_dec( now_sec );
+  Serial.print( "  updated seconds (after 3s delay)=" );
+  Serial.print( (uint16_t) now_sec );
+  Serial.println();
+
+  // expect the updated second count to have increased by 3 or 4
+  if ( cur_sec + 3 == now_sec || cur_sec + 4 == now_sec ) {
+    Serial.println( "Passed, seconds seem to be updating" );
+    ++tests_passed;
+  } else {
+    Serial.println( "Failed, seconds are not updating correctly?" );
+  }
+
+  ++tests_executed;
+}
+
 void runTests( bool log ) {
   verify_mem( log );
   write_mem();
   verify_mem( log );
+  set_time_and_date();
+  verify_clock_running();
 
   Serial.print( tests_passed );
   Serial.print( "/" );
