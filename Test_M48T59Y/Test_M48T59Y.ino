@@ -27,7 +27,7 @@
 //      connected to D4..D7 on the M49T59Y (its high 4 data bus pins)
 //
 //   Arduino A4: connected to GO pushbutton (shorts to ground when pressed)
-//   Ardiomp A5: connected to LOG pushbutton (shorts to ground when pressed)
+//   Arduino A5: connected to LOG pushbutton (shorts to ground when pressed)
 
 #define SHIFTREG_DATA 2
 #define SHIFTREG_SCLK 3
