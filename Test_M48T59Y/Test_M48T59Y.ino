@@ -1,5 +1,7 @@
 // Test program for M48T59Y
 
+#include <avr/pgmspace.h>
+
 // Purpose of the test program is to verify that the
 // functions of the M48T59Y are working correctly.
 
@@ -56,7 +58,7 @@
 // For very short delays
 #define NOP() __asm__ __volatile__ ("nop\n\t")
 
-void assertAddr(uint16_t addr) {
+void assert_addr(uint16_t addr) {
   for (uint8_t i = 0; i < 16; ++i) {
     // assert one bit of address
     digitalWrite( SHIFTREG_DATA, (addr & 0x8000) != 0 );
@@ -74,6 +76,7 @@ void assertAddr(uint16_t addr) {
   digitalWrite( SHIFTREG_RCLK, 0 );
 }
 
+/*
 // We use an pseudo-random number generator
 // to generate data to store in the M48T59Y's memory.
 // Because the sequence is same as long as the seed is the
@@ -112,6 +115,11 @@ uint8_t rng_gen() {
   --rngNumAvail;
   return result;
 }
+*/
+
+// This boolean will keep track of whether the data bus
+// pins are configured for reading or writing.
+bool bus_reading;
 
 // Set up DDRC and DDRB for reading from the M48T59Y.
 void configure_data_bus_for_read() {
@@ -120,18 +128,23 @@ void configure_data_bus_for_read() {
   // disable all pull ups
   PORTC = 0x00;
   PORTB = 0x00;
+  bus_reading = true;
 }
 
 // Set up DDRC and DDRB for writing to the M48T59Y.
 void configure_data_bus_for_write() {
   DDRC = 0x0F;
   DDRB = 0x0F;
+  bus_reading = false;
 }
 
 uint8_t m48t59y_read( uint16_t addr ) {
+  if ( !bus_reading )
+    configure_data_bus_for_read();
+
   uint8_t data;
   digitalWrite( M48T59Y_NW, 1 ); // make sure write is de-asserted
-  assertAddr( addr );
+  assert_addr( addr );
   NOP();
   digitalWrite( M48T59Y_NE, 0 ); // enable chip
   NOP();
@@ -144,12 +157,12 @@ uint8_t m48t59y_read( uint16_t addr ) {
   return data;
 }
 
-// Note: before calling this, make sure that DDRC and DDRB
-// are both set to 0x0F so that we can assert data to the M48T59Y's
-// data pins.
 void m48t59y_write( uint16_t addr, uint8_t data ) {
+  if ( bus_reading )
+    configure_data_bus_for_write();
+
   digitalWrite( M48T59Y_NW, 1 ); // make sure write signal is de-asserted
-  assertAddr( addr );
+  assert_addr( addr );
   PORTC = (PORTC & 0xF0) | (data & 0xF); // output low nybble of data
   PORTB = (PORTB & 0xF0) | ((data >> 4) & 0xF); // output high nybble of data
   NOP();
@@ -164,11 +177,95 @@ void m48t59y_write( uint16_t addr, uint8_t data ) {
 
 uint8_t tests_passed, tests_executed;
 
+void report_mismatch( uint16_t addr, uint8_t expected, uint8_t data ) {
+  Serial.print("[");
+  Serial.print( addr, HEX );
+  Serial.print(",e=");
+  Serial.print( expected, HEX );
+  Serial.print(",a=");
+  Serial.print( data, HEX );
+  Serial.println("]");
+  //delay(250);
+}
+
+#define NTESTS 16
+
+static const uint16_t test_addrs[] PROGMEM = {
+  0x1bb1, 0x4d9, 0x10b1, 0x936, 0x106d, 0x199f, 0x3b4, 0xd64, 0x160, 0x1db1, 0x1052, 0x1e6e,
+  0x61a, 0xabb, 0x75e, 0x1a0e, 
+};
+
+static const uint8_t test_data[] PROGMEM = {
+0xec, 0x46, 0x67, 0x70, 0x8, 0x52, 0xce, 0xe6, 0x6c, 0x6e, 0x1b, 0xf8,
+  0xe2, 0x11, 0xdf, 0x2e, 
+};
+
+// Verify that contents of memory are consistent with previous execution
+// of simple_rw_tests()
+void simple_rw_tests_verify( bool log ) {
+  Serial.print( "Verifying data written by simple read/write tests..." );
+
+  uint16_t err_count = 0;
+
+  for ( uint16_t i = 0; i < NTESTS; ++i ) {
+    uint16_t addr = pgm_read_word( &test_addrs[i] );
+    uint8_t expected = pgm_read_byte( &test_data[i] );
+    uint8_t data;
+
+    data = m48t59y_read( addr );
+    if ( data != expected ) {
+      ++err_count;
+      if ( log )
+        report_mismatch( addr, expected, data );
+    }
+  }
+
+  if ( err_count == 0 ) {
+    Serial.println( "  Success!" );
+    ++tests_passed;
+  } else
+    Serial.println( "Error(s) accessing memory" );
+
+  ++tests_executed;
+}
+
+// Very simple read/write tests
+void simple_rw_tests( bool log ) {
+  Serial.print( "Simple read/write tests..." );
+
+  uint16_t err_count = 0;
+
+  for ( uint16_t i = 0; i < NTESTS; ++i ) {
+    uint16_t addr = pgm_read_word( &test_addrs[i] );
+    uint8_t expected = pgm_read_byte( &test_data[i] );
+    uint8_t data;
+
+    m48t59y_write( addr, expected );
+    data = m48t59y_read( addr );
+    if ( data != expected ) {
+      ++err_count;
+      if ( log )
+        report_mismatch( addr, expected, data );
+    }
+
+    Serial.print( "." );
+  }
+
+  Serial.println();
+
+  if ( err_count == 0 ) {
+    Serial.println( "  Success!" );
+    ++tests_passed;
+  } else
+    Serial.println( "Error(s) accessing memory" );
+
+  ++tests_executed;
+}
+
+/*
 // Verify the contents of memory written previously by writeMem()
 void verify_mem( bool log_mismatch = false ) {
   Serial.print( "Verifying memory contents..." );
-
-  configure_data_bus_for_read();
 
   uint16_t addr = 0;
   uint16_t mismatch = 0;
@@ -181,15 +278,8 @@ void verify_mem( bool log_mismatch = false ) {
     expected = rng_gen();
     if ( data != expected ) {
       ++mismatch;
-      if ( log_mismatch ) {
-        Serial.print("[");
-        Serial.print( addr, HEX );
-        Serial.print(",e=");
-        Serial.print( expected, HEX );
-        Serial.print(",a=");
-        Serial.print( data, HEX );
-        Serial.print("]");
-      }
+      if ( log_mismatch )
+        report_mismatch( addr, expected, data );
     }
     
     ++addr;
@@ -210,8 +300,6 @@ void verify_mem( bool log_mismatch = false ) {
 void write_mem() {
   Serial.print( "Writing memory contents..." );
 
-  configure_data_bus_for_write();
-
   uint16_t addr = 0;
   uint16_t mismatch = 0;
   uint8_t data, expected;
@@ -225,9 +313,8 @@ void write_mem() {
   }
 
   Serial.println( "done" );
-
-  configure_data_bus_for_read();
 }
+*/
 
 uint8_t bcd_to_dec( uint8_t bcd ) {
   return (bcd >> 4)*10 + (bcd & 0xF);
@@ -235,8 +322,6 @@ uint8_t bcd_to_dec( uint8_t bcd ) {
 
 void set_time_and_date() {
   Serial.println( "Setting time and date..." );
-
-  configure_data_bus_for_write();
 
   // set the W bit in the control register
   // (note that we are leaving the calibration bits as 0,
@@ -257,8 +342,6 @@ void set_time_and_date() {
   // clear the W bit
   m48t59y_write( M48T59Y_CONTROL, 0x00 );
 
-  configure_data_bus_for_read();
-
   // wait one second
   delay( 1000 );
 }
@@ -270,12 +353,10 @@ void verify_clock_running() {
   Serial.println( "Verifying that clock is counting up..." );
 
   // set R bit in control register
-  configure_data_bus_for_write();
   m48t59y_write( M48T59Y_CONTROL, 0x40 );
 
   // read current value of seconds register (will probably be 1)
   uint8_t cur_sec;
-  configure_data_bus_for_read();
   cur_sec = m48t59y_read( M48T59Y_SECONDS );
   cur_sec = bcd_to_dec( cur_sec );
   Serial.print( "  initial seconds=" );
@@ -283,19 +364,15 @@ void verify_clock_running() {
   Serial.println();
 
   // clear R bit so that registers are updated again
-  configure_data_bus_for_write();
   m48t59y_write( M48T59Y_CONTROL, 0x00 );
-  configure_data_bus_for_read();
 
   // wait for three seconds
   delay( 3000 );
 
   // set R bit in control register again
-  configure_data_bus_for_write();
   m48t59y_write( M48T59Y_CONTROL, 0x40 );
 
   // read updated second count
-  configure_data_bus_for_read();
   uint8_t now_sec = m48t59y_read( M48T59Y_SECONDS );
   now_sec = bcd_to_dec( now_sec );
   Serial.print( "  updated seconds (after 3s delay)=" );
@@ -310,48 +387,32 @@ void verify_clock_running() {
     Serial.println( "Failed, seconds are not updating correctly?" );
   }
 
+/*
+  // clear R bit again
+  configure_data_bus_for_write();
+  m48t59y_write( M48T59Y_CONTROL, 0x00 );
+  configure_data_bus_for_read();
+*/
+
   ++tests_executed;
 }
 
-void runTests( bool log ) {
-  verify_mem( log );
-  write_mem();
-  verify_mem( log );
-  set_time_and_date();
-  verify_clock_running();
+void run_tests( bool log ) {
+  //verify_mem( log );
+  simple_rw_tests_verify( log );
+  simple_rw_tests( log );
+  simple_rw_tests_verify( log );
+  //write_mem();
+  //verify_mem( log );
+  //set_time_and_date();
+  //verify_clock_running();
 
   Serial.print( tests_passed );
   Serial.print( "/" );
   Serial.print( tests_executed );
   Serial.println( " tests passed" );
 
-/*
-  uint8_t data;
-
-  configure_data_bus_for_write();
-  m48t59y_write( 0x123, 0xDA );
   configure_data_bus_for_read();
-  data = m48t59y_read( 0x123 );
-  Serial.print( "Wrote 0xDA, read 0x" );
-  Serial.print( (uint16_t) data, HEX );
-  Serial.println( "" );
-
-  configure_data_bus_for_write();
-  m48t59y_write( 0x456, 0x00 );
-  configure_data_bus_for_read();
-  data = m48t59y_read( 0x456 );
-  Serial.print( "Wrote 0x00, read 0x" );
-  Serial.print( (uint16_t) data, HEX );
-  Serial.println( "" );
-
-  configure_data_bus_for_write();
-  m48t59y_write( 0x789, 0xFF );
-  configure_data_bus_for_read();
-  data = m48t59y_read( 0x789 );
-  Serial.print( "Wrote 0xFF, read 0x" );
-  Serial.print( (uint16_t) data, HEX );
-  Serial.println( "" );
-*/
 }
 
 void setup() {
@@ -382,21 +443,19 @@ void setup() {
   //runTests();
 }
 
-uint16_t test = 0;
-
 void loop() {
-  if ( (PINC & 0x10) == 0 ) {
+  if ( (PINC & GO) == 0 ) {
     // GO button was pressed
     Serial.println( "GO pressed" );
 
     // Check whether LOG button is pressed
-    bool log = ( (PINC & 0x20) == 0 );
+    bool log = ( (PINC & LOG) == 0 );
     if ( log )
       Serial.println( "LOG pressed, will log data mismatches" );
 
     tests_passed = 0;
     tests_executed = 0;
     
-    runTests( log );
+    run_tests( log );
   }
 }
