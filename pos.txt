@@ -1,3 +1,0 @@
-Positions of single-row connectors
-84.98,71.5
-84.98,86.74
