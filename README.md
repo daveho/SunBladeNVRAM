@@ -8,4 +8,4 @@ Sun workstations, such as the Sun Blade 150:
 All of the project files, including the KiCad project, assembly
 instructions, and a design for an Arduino-based tester/programmer, are here:
 
-<https://github.com/daveho/RandomStuff/tree/master/Episode0a>
+<https://github.com/daveho/RandomStuff/tree/master/Episode0d>
